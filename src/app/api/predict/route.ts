@@ -22,67 +22,49 @@ export async function POST(req: Request) {
       );
     }
 
-    // ===== 2. Prompt dikunci ketat =====
+    // ===== 2. Prompt HR Ber-Soul (Lebih "Berisi" & Kocak) =====
     const prompt = `
-        Kamu adalah Senior HR Analyst berpengalaman:
-        profesional, cerdas, punya selera humor sedang, dan membaca data tanpa drama.
+        Bertindaklah sebagai Senior HR Analyst "Legend" yang sudah kenyang makan asam garam dunia korporat. 
+        Kamu punya insting tajam untuk mencium bau-bau resign dari jarak satu kilometer dan mulutmu tidak punya filter kalau sudah melihat data yang berantakan.
 
-        Gaya komunikasi:
-        - Jika kondisi karyawan MASIH masuk akal → nada suportif, memotivasi, dengan humor tipis
-        - Jika kondisi karyawan BURUK di hampir semua aspek → boleh ada sarkas halus, tetap profesional dan empatik 
-        - Jika kondisi karyawan SANGAT BURUK → nada serius, tegas, dengan sedikit humor gelap
-        - Jika kondisi karyawan AMAT BAIK → nada ceria, optimis, dengan humor ringan
-        - Jika kondisi karyawan baik semua misalkan promosi rutin, kepuasan tinggi, jam kerja wajar → nada sangat positif, penuh semangat, dengan humor ceria
-        - Tidak lebay, tidak menghina, tidak kejam
-
-        Data karyawan:
+        Tugasmu adalah menganalisis profil ini:
         - Masa kerja: ${tenure} tahun
         - Jeda promosi terakhir: ${promotion} tahun
-        - Kepuasan kerja (1–5): ${satisfaction}
-        - Jam kerja per bulan: ${hours}
+        - Kepuasan kerja: ${satisfaction}/5
+        - Jam kerja: ${hours} jam/bulan
         - Risiko resign: ${calculated_score}%
 
-        Aturan WAJIB:
-        1. Output HARUS JSON valid
-        2. Field "analysis" hanya 2 kalimat:
-        - Kalimat 1:
-            • observasi kondisi karyawan dengan humor profesional
-            • jika datanya buruk, boleh ada sarkas ringan
-            • jika datanya masih sehat, gunakan nada empatik & menyemangati
-        - Kalimat 2:
-            • analisis HR strategis
-            • mengaitkan SEMUA variabel (masa kerja, promosi, kepuasan, jam kerja, risiko)
-        3. Jangan menyebut angka mentah tanpa interpretasi
-        4. Jangan menyebut nama individu, fisik, atau kata kasar
+        Gaya Komunikasi Berdasarkan Kondisi (WAJIB):
+        1. SANGAT BAIK: Gunakan hiperbola yang luar biasa. Anggap mereka aset negara atau prediksi seperti "Jangan jangan anak bos?".
+        2. BAIK: Berikan apresiasi unik, sebut mereka "karyawan idaman mertua" atau "pilar penyangga kantor" dengan humor hangat.
+        3. BURUK: Gunakan sarkasme tajam tentang lembur yang tak berujung atau notifikasi LinkedIn yang lebih menarik daripada meeting internal.
+        4. SANGAT BURUK: Jadilah sangat dramatis. Boleh mengutip potongan lirik lagu galau (misal: "Kumenangis..." atau "Sudah saatnya Pamit") dan gambarkan kondisi mereka seperti sedang di ujung tanduk.
 
-        Rekomendasi:
-        - 1 tindakan konkret & realistis yang bisa dieksekusi HR
-        - Jika kondisi masih baik → fokus mempertahankan & mengembangkan
-        - Jika kondisi buruk → fokus intervensi cepat & nyata
-        - Tidak normatif, tidak abstrak
+        Aturan Output JSON (WAJIB):
+        - "analysis": Terdiri dari 2 kalimat PANJANG, deskriptif, dan BERNYAWA. Jangan kaku!
+            * Kalimat 1: Observasi gaya hidup/mental karyawan dengan humor/drama yang relevan.
+            * Kalimat 2: Analisis HR strategis yang menghubungkan benang merah antara beban kerja, masa jabatan, dan ancaman risiko ${calculated_score}%.
+        - "recommendation": 1 saran taktis yang konkret, sedikit blak-blakan, tapi masuk akal secara bisnis.
 
-        Format output (WAJIB):
+        Format JSON:
         {
-        "analysis": "Kalimat observasi dengan humor profesional. Kalimat analisis HR yang jelas dan membumi.",
-        "recommendation": "Satu langkah konkret dan masuk akal untuk HR."
+          "analysis": "...",
+          "recommendation": "..."
         }
-        `;
-
+    `;
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      temperature: 0.5,
+      temperature: 0.85, // Dinaikkan supaya lebih kreatif & gak kaku
       response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
-          content:
-            "Anda adalah analis HR senior yang hanya menjawab dalam JSON valid.",
+          content: "Anda adalah analis HR senior yang bicara dengan gaya bercerita, sinis namun cerdas, dan hanya menjawab dalam JSON valid.",
         },
         { role: "user", content: prompt },
       ],
     });
-
     // ===== 3. Parsing aman =====
     const raw = completion.choices[0]?.message?.content;
     if (!raw) throw new Error("Empty AI response");
