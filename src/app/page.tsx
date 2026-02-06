@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   BrainCircuit, Loader2, AlertTriangle, CheckCircle, Send, 
   UserCheck, Clock, Star, TrendingUp, HelpCircle, Info,
-  Shield, Target, Calendar
+  Shield, Target, Calendar, Award, Briefcase
 } from 'lucide-react';
 
 export default function HRISPredictor() {
@@ -119,7 +119,7 @@ export default function HRISPredictor() {
         onMouseLeave={() => setShowTooltip(null)}
       />
       {showTooltip === text && (
-        <div className="absolute left-0 top-6 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 top-6 w-72 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           {detail}
           <div className="absolute -top-1 left-2 w-2 h-2 bg-slate-800 transform rotate-45"></div>
         </div>
@@ -247,13 +247,13 @@ export default function HRISPredictor() {
             icon: <UserCheck size={18} className="text-blue-600" />,
             title: 'Lama Kerja',
             bgColor: 'bg-blue-50',
-            description: 'Total tahun bekerja di perusahaan. Karyawan senior tanpa perkembangan cenderung mencari peluang baru.'
+            description: 'Total tahun bekerja di perusahaan saat ini. Karyawan senior tanpa perkembangan cenderung mencari peluang baru.'
           },
           {
             icon: <TrendingUp size={18} className="text-emerald-600" />,
             title: 'Jeda Promosi',
             bgColor: 'bg-emerald-50',
-            description: 'Waktu sejak promosi terakhir. Tidak boleh melebihi lama kerja. Jeda panjang = risiko tinggi.'
+            description: 'Waktu sejak promosi terakhir. Tidak boleh melebihi lama kerja. Jeda panjang meningkatkan risiko resign.'
           },
           {
             icon: <Star size={18} className="text-amber-600" />,
@@ -375,22 +375,37 @@ export default function HRISPredictor() {
                   </div>
                 </div>
 
-                {/* Jeda Promosi */}
+                {/* Jeda Promosi - Dengan penjelasan lebih detail */}
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-6 rounded-xl border border-emerald-200 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div className="p-1.5 bg-emerald-600 rounded-lg shadow-sm">
-                        <TrendingUp size={18} className="text-white" />
+                        <Award size={18} className="text-white" />
                       </div>
                       <span className="font-semibold text-slate-800">Jeda Promosi</span>
                       <TooltipInfo 
                         text="promotion" 
-                        detail="Tahun sejak promosi terakhir. Nilai ini tidak boleh melebihi lama kerja. Jeda promosi panjang meningkatkan risiko resign."
+                        detail="Waktu yang telah berlalu sejak promosi atau kenaikan jabatan terakhir karyawan. Jeda yang terlalu lama (lebih dari 3-4 tahun) seringkali menyebabkan karyawan merasa stagnan dan mencari peluang baru di luar perusahaan."
                       />
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-emerald-700">{formData.promotion}</div>
+                      <div className={`text-2xl font-bold ${
+                        formData.promotion <= 2 ? 'text-emerald-700' :
+                        formData.promotion <= 4 ? 'text-amber-700' : 'text-red-700'
+                      }`}>
+                        {formData.promotion}
+                      </div>
                       <div className="text-xs text-slate-600">tahun</div>
+                    </div>
+                  </div>
+                  
+                  {/* Contoh Praktis Jeda Promosi */}
+                  <div className="mb-4 p-3 bg-white rounded-lg border border-emerald-100">
+                    <p className="text-xs text-slate-700 mb-2 font-medium">📌 Contoh Praktis:</p>
+                    <div className="text-xs text-slate-600 space-y-1">
+                      <p><span className="font-semibold text-emerald-700">1-2 tahun:</span> Wajar, normal dalam pengembangan karir</p>
+                      <p><span className="font-semibold text-amber-700">3-4 tahun:</span> Waspada, perlu evaluasi perkembangan</p>
+                      <p><span className="font-semibold text-red-700">5+ tahun:</span> Risiko tinggi, stagnasi karir</p>
                     </div>
                   </div>
                   
@@ -409,9 +424,27 @@ export default function HRISPredictor() {
                     </div>
                   )}
                   
-                  <div className="flex justify-between text-xs text-slate-600 mt-3">
-                    <span>0 tahun</span>
-                    <span className="text-slate-500">Maksimal: {formData.tenure} tahun</span>
+                  <div className="flex justify-between items-center text-xs text-slate-600 mt-3">
+                    <span className="flex items-center gap-1">
+                      <Briefcase size={10} />
+                      0 tahun
+                    </span>
+                    <span className="text-slate-500 font-medium">
+                      {formData.promotion === 0 ? 'Baru dipromosikan' : 
+                       formData.promotion === 1 ? '1 tahun sejak promosi' :
+                       `${formData.promotion} tahun tanpa promosi`}
+                    </span>
+                    <span className="text-slate-500 text-xs">
+                      Maks: {formData.tenure} tahun
+                    </span>
+                  </div>
+                  
+                  {/* Penjelasan sederhana untuk user awam */}
+                  <div className="mt-4 p-3 bg-emerald-50/80 rounded-lg border border-emerald-100">
+                    <p className="text-xs font-medium text-emerald-800 mb-1">💡 Apa itu Jeda Promosi?</p>
+                    <p className="text-xs text-emerald-700 leading-relaxed">
+                      "Jeda promosi" adalah <span className="font-semibold">berapa lama karyawan TIDAK mengalami kenaikan jabatan atau promosi</span> sejak kenaikan terakhir. Semakin lama jedanya, semakin besar kemungkinan karyawan merasa jenuh dan mencari peluang lain.
+                    </p>
                   </div>
                 </div>
 
