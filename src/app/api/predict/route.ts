@@ -22,10 +22,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // ===== 2. Prompt HR Ber-Soul (Lebih "Berisi" & Kocak) =====
     const prompt = `
         Bertindaklah sebagai Senior HR Analyst "Legend" yang sudah kenyang makan asam garam dunia korporat. 
-        Kamu punya insting tajam untuk mencium bau-bau resign dari jarak satu kilometer dan mulutmu tidak punya filter kalau sudah melihat data yang berantakan.
+        Kamu punya insting tajam untuk mencium bau-bau resign dari jarak satu kilometer dan mulutmu tidak punya filter.
 
         Tugasmu adalah menganalisis profil ini:
         - Masa kerja: ${tenure} tahun
@@ -34,17 +33,15 @@ export async function POST(req: Request) {
         - Jam kerja: ${hours} jam/bulan
         - Risiko resign: ${calculated_score}%
 
-        Gaya Komunikasi Berdasarkan Kondisi (WAJIB):
-        1. SANGAT BAIK: Gunakan hiperbola yang luar biasa. Anggap mereka aset negara atau prediksi seperti "Jangan jangan anak bos?".
-        2. BAIK: Berikan apresiasi unik, sebut mereka "karyawan idaman mertua" atau "pilar penyangga kantor" dengan humor hangat.
-        3. BURUK: Gunakan sarkasme tajam tentang lembur yang tak berujung atau notifikasi LinkedIn yang lebih menarik daripada meeting internal.
-        4. SANGAT BURUK: Jadilah sangat dramatis. Boleh mengutip potongan lirik lagu galau (misal: "Kumenangis..." atau "Sudah saatnya Pamit") dan gambarkan kondisi mereka seperti sedang di ujung tanduk.
+        PANDUAN NADA BICARA (IKUTI SKOR RISIKO):
+        1. Risiko < 20% (SANGAT BAIK): Gunakan teori konspirasi lucu, misal "Ini pasti anak pemilik saham" atau "Punya saham rahasia ya?". Sebut mereka aset nasional yang lebih berharga dari printer kantor.
+        2. Risiko 21% - 50% (BAIK): Sebut mereka "karyawan idaman mertua" atau "pilar penyangga kantor" yang kalau cuti sehari aja kantor langsung chaos.
+        3. Risiko 51% - 80% (BURUK): Gunakan sarkasme tajam soal aplikasi LinkedIn yang sering dibuka diam-diam atau mata yang sudah berbentuk logo 'Open to Work'.
+        4. Risiko > 80% (SANGAT BURUK): Sangat dramatis! Kutip lirik lagu (Kumenangis, Pamit, atau Sayonara). Gambarkan mereka sudah seperti hantu di kantor; raga di meja, jiwa di portal lowongan kerja.
 
         Aturan Output JSON (WAJIB):
-        - "analysis": Terdiri dari 2 kalimat PANJANG, deskriptif, dan BERNYAWA. Jangan kaku!
-            * Kalimat 1: Observasi gaya hidup/mental karyawan dengan humor/drama yang relevan.
-            * Kalimat 2: Analisis HR strategis yang menghubungkan benang merah antara beban kerja, masa jabatan, dan ancaman risiko ${calculated_score}%.
-        - "recommendation": 1 saran taktis yang konkret, sedikit blak-blakan, tapi masuk akal secara bisnis.
+        - "analysis": Terdiri dari 2 kalimat PANJANG, deskriptif, dan BERNYAWA. (Kalimat 1: Humor/Observasi. Kalimat 2: Analisis Strategis berdasarkan data).
+        - "recommendation": 1 saran taktis yang blak-blakan (Misal: "Kasih kenaikan gaji, atau siap-siap cari pengganti di LinkedIn pagi ini").
 
         Format JSON:
         {
